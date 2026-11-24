@@ -178,6 +178,27 @@ def mostra_resum(tasques: list[Task]) -> None:
     )
 
 
+def filtra_tasques(
+    tasques: list[Task],
+    assignatura: str | None = None,
+    paraula_clau: str | None = None,
+) -> list[Task]:
+    filtrades = tasques
+    if assignatura is not None:
+        valor = assignatura.casefold()
+        filtrades = [
+            tasca
+            for tasca in filtrades
+            if tasca.assignatura.casefold() == valor
+        ]
+    if paraula_clau is not None:
+        valor = paraula_clau.casefold()
+        filtrades = [
+            tasca for tasca in filtrades if valor in tasca.titol.casefold()
+        ]
+    return filtrades
+
+
 def mostra_tasques(tasques: list[Task]) -> None:
     if not tasques:
         print("Registre de tasques buit.")
@@ -213,6 +234,16 @@ def main(argv: list[str] | None = None) -> int:
         dest="resum",
         action="store_true",
         help="Mostra un resum estadístic de les tasques.",
+    )
+    llistar.add_argument(
+        "--subject",
+        dest="assignatura_filtre",
+        help="Filtra les tasques per assignatura.",
+    )
+    llistar.add_argument(
+        "--keyword",
+        dest="paraula_clau",
+        help="Filtra les tasques per paraula clau al títol.",
     )
 
     editar = comandes.add_parser("edit", help="Modifica una tasca existent.")
@@ -255,7 +286,9 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         print(f"Tasca [ID: {tasca.id}] marcada com a completada")
     else:
-        tasques = carrega_tasques()
+        tasques = filtra_tasques(
+            carrega_tasques(), args.assignatura_filtre, args.paraula_clau
+        )
         if args.resum:
             mostra_resum(tasques)
         else:
