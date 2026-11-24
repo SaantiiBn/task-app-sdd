@@ -125,15 +125,35 @@ def mostra_error_id(id_tasca: int) -> None:
     print(f"Error: no existeix cap tasca amb ID {id_tasca}.", file=sys.stderr)
 
 
+def etiqueta_alerta(tasca: Task, avui: date) -> str:
+    if tasca.estat != "pendent" or tasca.data_limit is None:
+        return ""
+    try:
+        data_limit = date.fromisoformat(tasca.data_limit)
+    except ValueError:
+        return ""
+    dies_restants = (data_limit - avui).days
+    if dies_restants < 0:
+        return " [CADUCADA]"
+    if dies_restants < 7:
+        return " [URGENT]"
+    return ""
+
+
 def mostra_tasques(tasques: list[Task]) -> None:
     if not tasques:
         print("Registre de tasques buit.")
         return
+    avui = date.today()
     for tasca in tasques:
-        print(
+        linia = (
             f"[{tasca.id}] {tasca.titol} ({tasca.assignatura}) "
             f"- estat: {tasca.estat}"
         )
+        if tasca.data_limit is not None:
+            linia += f" - límit: {tasca.data_limit}"
+            linia += etiqueta_alerta(tasca, avui)
+        print(linia)
 
 
 def main(argv: list[str] | None = None) -> int:
