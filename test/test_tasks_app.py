@@ -224,3 +224,106 @@ def test_gs07_llistat_amb_etiquetes(tmp_path: Path) -> None:
             f"- límit: {data_futura}"
         ),
     ]
+
+
+def test_gs08_resum_estadistic(tmp_path: Path) -> None:
+    avui = date.today()
+    escriu_registre(
+        tmp_path,
+        [
+            {
+                "id": 1,
+                "titol": "Entrega completada",
+                "assignatura": "RS",
+                "estat": "completada",
+                "data_limit": (avui - timedelta(days=10)).isoformat(),
+            },
+            {
+                "id": 2,
+                "titol": "Tasca caducada",
+                "assignatura": "SO",
+                "estat": "pendent",
+                "data_limit": (avui - timedelta(days=2)).isoformat(),
+            },
+            {
+                "id": 3,
+                "titol": "Tasca urgent",
+                "assignatura": "BD",
+                "estat": "pendent",
+                "data_limit": (avui + timedelta(days=3)).isoformat(),
+            },
+            {
+                "id": 4,
+                "titol": "Tasca futura",
+                "assignatura": "RS",
+                "estat": "pendent",
+                "data_limit": (avui + timedelta(days=20)).isoformat(),
+            },
+        ],
+    )
+
+    sortida = executa_cli(tmp_path, "list", "--summary")
+
+    assert sortida.strip() == (
+        "Resum de tasques - Total: 4 | Pendents: 3 | Completades: 1 "
+        "| Caducades: 1 | Urgents: 1"
+    )
+
+
+def test_gs09_filtrat_per_assignatura(tmp_path: Path) -> None:
+    escriu_registre(
+        tmp_path,
+        [
+            {
+                "id": 1,
+                "titol": "Pràctica 1",
+                "assignatura": "RS",
+                "estat": "pendent",
+            },
+            {
+                "id": 2,
+                "titol": "Examen parcial",
+                "assignatura": "SO",
+                "estat": "pendent",
+            },
+            {
+                "id": 3,
+                "titol": "Entrega SDD",
+                "assignatura": "rs",
+                "estat": "pendent",
+            },
+        ],
+    )
+
+    sortida = executa_cli(tmp_path, "list", "--subject", "RS")
+
+    assert sortida.splitlines() == [
+        "[1] Pràctica 1 (RS) - estat: pendent",
+        "[3] Entrega SDD (rs) - estat: pendent",
+    ]
+
+
+def test_gs10_filtrat_per_paraula_clau(tmp_path: Path) -> None:
+    escriu_registre(
+        tmp_path,
+        [
+            {
+                "id": 1,
+                "titol": "Examen parcial",
+                "assignatura": "SO",
+                "estat": "pendent",
+            },
+            {
+                "id": 2,
+                "titol": "Pràctica 1",
+                "assignatura": "RS",
+                "estat": "pendent",
+            },
+        ],
+    )
+
+    sortida = executa_cli(tmp_path, "list", "--keyword", "examen")
+
+    assert sortida.splitlines() == [
+        "[1] Examen parcial (SO) - estat: pendent"
+    ]

@@ -37,4 +37,4 @@ Objectiu: Afegir opcions de resum estadístic (`--summary`), filtrat per assigna
 ### Tasques d'Execució:
 - [x] Tasca 3.1: Implementar la funció de càlcul estadístic i l'opció `list --summary` a `src/tasks_app.py` comptabilitzant total, pendents, completades, caducades i urgents. (Requisit RF-10)
 - [x] Tasca 3.2: Afegir els arguments opcionals `--subject` i `--keyword` a la subcomanda `list` de `src/tasks_app.py` permetent filtrar sense distinció de majúscules/minúscules (i combinables entre si). (Requisits RF-11 i RF-12)
-- [ ] Tasca 3.3: Afegir els tests d'integració a `test/test_tasks_app.py` per als escenaris GS-08, GS-09 i GS-10, verificar amb `python3 -m pytest test` que tots els tests passen i actualitzar `data/tasks.json` amb dades de mostra variades.
+- [x] Tasca 3.3: Afegir els tests d'integració a `test/test_tasks_app.py` per als escenaris GS-08, GS-09 i GS-10, verificar amb `python3 -m pytest test` que tots els tests passen i actualitzar `data/tasks.json` amb dades de mostra variades.
