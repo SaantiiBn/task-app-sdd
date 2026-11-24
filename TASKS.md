@@ -29,4 +29,4 @@ Objectiu: Permetre gestionar dates límit (`--due`), editar tasques (`edit`), co
 - [x] Tasca 2.2: Actualitzar la comanda `add` a `src/tasks_app.py` per acceptar l'argument opcional `--due YYYY-MM-DD` validant el format de data. (Requisit RF-05)
 - [x] Tasca 2.3: Implementar les subcomandes `edit --id <ID>` (per modificar `--title`, `--subject`, `--due`) i `complete --id <ID>` a `src/tasks_app.py` gestionant el cas d'ID inexistent. (Requisits RF-06 i RF-07)
 - [x] Tasca 2.4: Actualitzar la funció de llistat (`list`) a `src/tasks_app.py` per mostrar la data límit (si en té) i afegir les etiquetes `[CADUCADA]` i `[URGENT]` en tasques pendents segons la data actual. (Requisits RF-08 i RF-09)
-- [ ] Tasca 2.5: Afegir els nous tests d'integració a `test/test_tasks_app.py` cobrint els escenaris GS-04, GS-05, GS-06 i GS-07, i verificar amb `python3 -m pytest test` que tots els tests (antics i nous) passen.
+- [x] Tasca 2.5: Afegir els nous tests d'integració a `test/test_tasks_app.py` cobrint els escenaris GS-04, GS-05, GS-06 i GS-07, i verificar amb `python3 -m pytest test` que tots els tests (antics i nous) passen.
