@@ -125,7 +125,7 @@ def mostra_error_id(id_tasca: int) -> None:
     print(f"Error: no existeix cap tasca amb ID {id_tasca}.", file=sys.stderr)
 
 
-def etiqueta_alerta(tasca: Task, avui: date) -> str:
+def tipus_alerta(tasca: Task, avui: date) -> str:
     if tasca.estat != "pendent" or tasca.data_limit is None:
         return ""
     try:
@@ -134,10 +134,48 @@ def etiqueta_alerta(tasca: Task, avui: date) -> str:
         return ""
     dies_restants = (data_limit - avui).days
     if dies_restants < 0:
-        return " [CADUCADA]"
+        return "CADUCADA"
     if dies_restants < 7:
-        return " [URGENT]"
+        return "URGENT"
     return ""
+
+
+def etiqueta_alerta(tasca: Task, avui: date) -> str:
+    alerta = tipus_alerta(tasca, avui)
+    return f" [{alerta}]" if alerta else ""
+
+
+def calcula_estadistiques(tasques: list[Task], avui: date) -> dict[str, int]:
+    estadistiques = {
+        "total": len(tasques),
+        "pendents": 0,
+        "completades": 0,
+        "caducades": 0,
+        "urgents": 0,
+    }
+    for tasca in tasques:
+        if tasca.estat == "completada":
+            estadistiques["completades"] += 1
+        elif tasca.estat == "pendent":
+            estadistiques["pendents"] += 1
+            alerta = tipus_alerta(tasca, avui)
+            if alerta == "CADUCADA":
+                estadistiques["caducades"] += 1
+            elif alerta == "URGENT":
+                estadistiques["urgents"] += 1
+    return estadistiques
+
+
+def mostra_resum(tasques: list[Task]) -> None:
+    estadistiques = calcula_estadistiques(tasques, date.today())
+    print(
+        "Resum de tasques - "
+        f"Total: {estadistiques['total']} | "
+        f"Pendents: {estadistiques['pendents']} | "
+        f"Completades: {estadistiques['completades']} | "
+        f"Caducades: {estadistiques['caducades']} | "
+        f"Urgents: {estadistiques['urgents']}"
+    )
 
 
 def mostra_tasques(tasques: list[Task]) -> None:
@@ -167,7 +205,15 @@ def main(argv: list[str] | None = None) -> int:
     afegir.add_argument("--subject", required=True, dest="assignatura")
     afegeix_argument_data_limit(afegir)
 
-    comandes.add_parser("list", help="Mostra totes les tasques registrades.")
+    llistar = comandes.add_parser(
+        "list", help="Mostra totes les tasques registrades."
+    )
+    llistar.add_argument(
+        "--summary",
+        dest="resum",
+        action="store_true",
+        help="Mostra un resum estadístic de les tasques.",
+    )
 
     editar = comandes.add_parser("edit", help="Modifica una tasca existent.")
     editar.add_argument("--id", required=True, type=int)
@@ -209,7 +255,11 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         print(f"Tasca [ID: {tasca.id}] marcada com a completada")
     else:
-        mostra_tasques(carrega_tasques())
+        tasques = carrega_tasques()
+        if args.resum:
+            mostra_resum(tasques)
+        else:
+            mostra_tasques(tasques)
 
     return 0
 
