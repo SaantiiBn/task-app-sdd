@@ -101,3 +101,32 @@ classDiagram
   `"[1] Tasca antiga (RS) - estat: pendent - límit: 2026-11-20 [CADUCADA]"`
   `"[2] Tasca propera (SO) - estat: pendent - límit: 2026-11-28 [URGENT]"`
   `"[3] Tasca futura (BD) - estat: pendent - límit: 2026-12-15"`
+
+## 7. Evolució Sprint 3: Modes Avançats de Llistat i Resum (v3.0)
+
+### 7.1 User Stories (Sprint 3)
+* **US-07:** Com a estudiant, vull consultar un resum estadístic de les meves tasques (total, pendents, completades, caducades i urgents) per tenir una visió global de la meva càrrega acadèmica.
+* **US-08:** Com a estudiant, vull filtrar el llistat de tasques per una assignatura concreta per centrar-me en una matèria específica.
+* **US-09:** Com a estudiant, vull cercar tasques mitjançant una paraula clau al títol per localitzar ràpidament una entrega o examen.
+
+### 7.2 Requisits (Patró SOPHIST)
+* **RF-10:** El sistema `tasks_app` ha de proveir a l'estudiant la capacitat de visualitzar un resum quantitatiu de les tasques registrades (total, pendents, completades, caducades i urgents) mitjançant el comandament `list --summary` (o el subcomandament `summary`).
+* **RF-11:** El sistema `tasks_app` ha de proveir a l'estudiant la capacitat de filtrar les tasques per assignatura (sense distinció de majúscules o minúscules) mitjançant el paràmetre `list --subject <assignatura>`.
+* **RF-12:** El sistema `tasks_app` ha de proveir a l'estudiant la capacitat de filtrar les tasques que continguin una paraula clau al títol (sense distinció de majúscules o minúscules) mitjançant el paràmetre `list --keyword <paraula_clau>`.
+
+### 7.3 Criteris d'acceptació i proves (Gherkin scenarios - Sprint 3)
+* **GS-08: Visualització del resum estadístic**
+  Atès que el registre conté 4 tasques: 1 completada, 1 pendent caducada, 1 pendent urgent i 1 pendent futura
+  Quan l'estudiant executa `python3 src/tasks_app.py list --summary`
+  Aleshores el sistema mostra:
+  `"Resum de tasques - Total: 4 | Pendents: 3 | Completades: 1 | Caducades: 1 | Urgents: 1"`
+
+* **GS-09: Filtrat de tasques per assignatura**
+  Atès que el registre conté tasques de `'RS'` i `'SO'`
+  Quan l'estudiant executa `python3 src/tasks_app.py list --subject RS`
+  Aleshores el sistema mostra únicament les tasques pertanyents a l'assignatura `'RS'`.
+
+* **GS-10: Filtrat de tasques per paraula clau al títol**
+  Atès que el registre conté les tasques `'Examen parcial'` i `'Pràctica 1'`
+  Quan l'estudiant executa `python3 src/tasks_app.py list --keyword examen`
+  Aleshores el sistema mostra únicament la tasca `'Examen parcial'`.
